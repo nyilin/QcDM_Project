@@ -1,0 +1,182 @@
+---
+title: "Overall summary report"
+date: "`r Sys.Date()`"
+output: pdf_document
+fontsize: 12pt
+params:
+  dat: dat
+  print_n_perc: print_n_perc
+  summarise_num: summarise_num
+  kable_table: kable_table
+  time_format: time_format
+  bp_file: bp_file
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+require("dplyr", quietly = TRUE)
+```
+
+## 1) Overall data summaries
+
+Records | N (%)
+-------------------------------------------------------|-------------
+Number of rows read in | `r nrow(params$dat)`
+Number of rows with valid BG value format | `r params$print_n_perc(n = sum(!is.na(params$dat$result)), total = nrow(params$dat))`
+Number of rows with valid BG date/timestamp format | `r params$print_n_perc(n = sum(!is.na(params$dat$result_time)), total = nrow(params$dat))`
+Number of rows with valid BG value and date/timestamp format | `r params$print_n_perc(n = sum(!is.na(params$dat$result_time) & !is.na(params$dat$result)), total = nrow(params$dat))`
+Number of rows with valid BG value and date/timestamp format, and valid admission id and location* | `r params$print_n_perc(n = sum(!is.na(params$dat$result_time) & !is.na(params$dat$result) & !is.na(params$dat$admission_id) & !is.na(params$dat$location)), total = nrow(params$dat))`
+
+*: Valid admission id and location means that the entry is not NA or blank 
+(i.e., whitespace).
+
+### Overall summary of BG variables
+
+<!--
+When reporting BG results: focus on rows with valid BG results.
+When reporting BG timestamp: focus on rows with valid timestamps.
+When reporting number of readings per admission-day: focus on rows with all 
+four columns being valid.
+-->
+
+```{r, results='asis'}
+if (params$time_format == "hm") {
+  cat("Second was not included in the BG timestamp and was artificially inserted as 11 for completeness.\n")
+}
+if (params$time_format == "Not available") {
+  cat("BG timestamp was not available in the input data and was artificially inserted as 11:11:11 AM for completeness.\n")
+}
+```
+
+```{r, results='asis'}
+count_adm_day <- params$dat %>% 
+  filter(!is.na(admission_id), !is.na(date), !is.na(result), 
+         !is.na(location)) %>% 
+  group_by(admission_id, date) %>% 
+  summarise(n = n())
+# table2 <- rbind(params$summarise_num(params$dat$result), 
+#                 params$summarise_num(params$dat$result_time), 
+#                 params$summarise_num(count_adm_day$n, n_digits = 1))
+table2_1 <- params$summarise_num(params$dat$result)
+table2_2 <- format(params$summarise_num(params$dat$result_time), 
+                   "%Y-%m-%d %H:%M:%S")
+table2_3 <- params$summarise_num(count_adm_day$n, n_digits = 1)
+table2 <- data.frame(row_names = c("Min", "1-th", "5-th", "25-th", "Mean", 
+                                   "Median", "75-th", "95-th", "99-th", "Max"), 
+                     result = table2_1, result_time = table2_2, 
+                     count = table2_3, stringsAsFactors = FALSE)
+params$kable_table(table = table2, 
+                   colnames = c("[]()", "BG value", "BG date/timestamp", 
+                                "Count of BG reading per admission-day"), 
+                   width_row = "-------|----------|-------------------|--------------------------")
+```
+
+### Top 10 entries in BG variables
+
+```{r, results='asis'}
+# Top 10 are the largest
+table3_1 <- sort(params$dat$result, decreasing = TRUE, na.last = TRUE)[1:10]
+table3_2 <- format(sort(params$dat$result_time, 
+                        decreasing = TRUE, na.last = TRUE)[1:10], 
+                   "%Y-%m-%d %H:%M:%S")
+table3_3 <- sort(count_adm_day$n, decreasing = TRUE, na.last = TRUE)[1:10]
+table3 <- data.frame(row_name = 1:10, result = table3_1, result_time = table3_2, 
+                     count = table3_3, stringsAsFactors = FALSE)
+params$kable_table(
+  table = table3, 
+  colnames = c("[]()", "BG value", "BG date/timestamp", 
+               "Count of BG reading per admission-day"), 
+  width_row = "-------|----------|-------------------|--------------------------"
+)
+```
+
+### Bottom 10 entries in BG variables
+
+```{r, results='asis'}
+table4_1 <- sort(params$dat$result, decreasing = FALSE, na.last = TRUE)[1:10]
+table4_2 <- format(sort(params$dat$result_time, 
+                        decreasing = FALSE, na.last = TRUE)[1:10], 
+                   "%Y-%m-%d %H:%M:%S")
+table4_3 <- sort(count_adm_day$n, decreasing = FALSE, na.last = TRUE)[1:10]
+table4 <- data.frame(row_name = 1:10, result = table4_1, result_time = table4_2, 
+                     count = table4_3, stringsAsFactors = FALSE)
+params$kable_table(
+  table = table4, 
+  colnames = c("[]()", "BG value", "BG date/timestamp", 
+               "Count of BG reading per admission-day"), 
+  width_row = "-------|----------|-------------------|--------------------------"
+)
+```
+
+<!-- pdflatex was not able to handle path to figure if we do not manually save 
+boxplot to pdf. -->
+```{r, include=FALSE}
+pdf(file = params$bp_file, height = 4, width = 4)
+boxplot(params$dat$result, main = "Boxplot of valid BG values")
+dev.off()
+vec_loc <- unique(params$dat$location[!is.na(params$dat$location)])
+```
+
+```{r, results='asis'}
+cat("![](", params$bp_file, ")\n", sep = "")
+```
+<!-- Cannot remove the pdf after this line -->
+
+Number of unique valid admission ids: 
+`r length(unique(params$dat$admission_id))`.  
+Number of admission-days: `r nrow(count_adm_day)`.  
+Number of unique valid location: `r length(vec_loc)`.  
+List the unique valid location: `r toString(sort(vec_loc))`.
+
+## 2) Report of invalid readings
+
+### Invalid BG values
+
+```{r, results="asis"}
+dat_inv_result <- params$dat[is.na(params$dat$result), ]
+if (nrow(dat_inv_result) > 0) {
+  table5 <- dat_inv_result %>% 
+    group_by(result_raw) %>% 
+    summarise(n_and_perc = params$print_n_perc(n = n(), 
+                                               total = nrow(params$dat)))
+  colnames(table5) <- c("Label", "N (%)")
+  # If there are NA, annotate it
+  row_na <- which(is.na(table5$Label))
+  if (length(row_na) > 0) {
+    table5$Label[row_na] <- "NA*"
+  }
+  params$kable_table(
+    table = as.data.frame(table5), 
+    colnames = c("Label", "N (%)"), 
+    width_row = "-------|-------"
+  )
+  if (length(row_na) > 0) {
+    cat("*: Blank and NA entries are reported as NA.\n")
+  }
+}
+```
+
+```{r, results="asis"}
+if (nrow(dat_inv_result) == 0) {
+  cat("There is no invalid BG values in the input data.\n")
+}
+```
+
+### Invalid BG timestamps
+
+```{r, results="asis"}
+if (anyNA(params$dat$result_time)) {
+  result_time_invalid <- sort(params$dat$result_time_raw[is.na(params$dat$result_time)])
+  i_na <- which(is.na(result_time_invalid))
+  if (length(i_na) > 0) {
+    result_time_invalid[i_na] <- "NA*"
+  }
+  cat("The list of invalid BG timestamps are:\n", 
+      toString(sort(result_time_invalid)))
+  if (length(i_na) > 0) {
+    cat("*: Blank and NA entries are reported as NA.\n")
+  }
+} else {
+  cat("There is no invalid BG timestamp in the input data.\n")
+}
+```

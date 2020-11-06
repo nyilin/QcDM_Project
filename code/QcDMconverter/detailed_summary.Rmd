@@ -1,0 +1,114 @@
+---
+title: "Detailed summary report"
+date: "`r Sys.Date()`"
+output: pdf_document
+fontsize: 12pt
+params:
+  dat: dat
+  print_n_perc: print_n_perc
+  summarise_num: summarise_num
+  kable_table: kable_table
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+require("dplyr", quietly = TRUE)
+require("lubridate", quietly = TRUE)
+# require("kableExtra")
+dat_valid_time <- params$dat[!is.na(params$dat$monyyyy), ]
+dat_valid_time <- dat_valid_time[sort.list(dat_valid_time$result_time), ]
+n_total <- nrow(dat_valid_time)
+```
+
+<!--
+When checking whether a day has BG reading, require both timestamp and result to 
+be valid.
+When counting the number of BG readings per admission-day, require all columns 
+to be valid.
+-->
+
+In total, there are `r length(unique(dat_valid_time$monyyyy))` files generated.
+
+**Data quality for each file among entries with valid BG date/timestamp where
+each file contains data from a particular month in a year.**
+
+```{r, results='asis'}
+table1_1 <- dat_valid_time %>% 
+  group_by(year, month) %>% 
+  summarise(
+    n_days_with_bg = n_distinct(date[!is.na(result)]), 
+    n_days_in_month = as.numeric(days_in_month(ymd(paste(year[1], month[1], 
+                                                         1)))), 
+    file_name = paste0(monyyyy[1], ".csv"), 
+    n_rows = params$print_n_perc(n = n(), total = n_total), 
+    n_valid_result = params$print_n_perc(n = sum(!is.na(result)), 
+                                         total = n_total), 
+    n_valid_all = params$print_n_perc(n = sum(!is.na(result) & 
+                                                !is.na(admission_id) & 
+                                                !is.na(location)), 
+                                      total = n_total), 
+    str_days_with_bg = sprintf("%d/%d", n_days_with_bg, n_days_in_month)
+  )
+table1_2 <- dat_valid_time %>% 
+  filter(!is.na(admission_id), !is.na(result), !is.na(location)) %>% 
+  group_by(year, month, date, admission_id) %>%
+  summarise(file_name = paste0(monyyyy[1], ".csv"), n = n()) %>% 
+  group_by(file_name) %>% 
+  summarise(n_per_day = sprintf("%.1f (%.1f - %.1f)", median(n), min(n), max(n)))
+table1 <- merge(table1_1, table1_2, by = "file_name", all = TRUE) %>%
+  arrange(year, month)
+params$kable_table(
+  table = table1[, -(2:5)],
+  colnames = c("File name", "Number of rows read in: N (%)",
+               "Number of rows with valid BG value format: N (%)",
+               "Number of rows with valid BG value format, and valid admission id and location*: N (%)",
+               "Number of days with at least 1 BG reading / Number of days in that month",
+               "Count of BG reading per admission-day: Median (min - max)"),
+  width_row = "-----------|-------------|-------------|-------------|-------------|-------------"
+)
+# cat("*: Valid admission id and location means that the entry is not NA or blank (i.e., whitespace).\n")
+```
+
+There are `r sum(table1_1$n_days_with_bg / table1_1$n_days_in_month < 0.75)` 
+files where less than 75% of the days within the month had at least 1 BG reading.
+
+**Data quality for each location among entries with valid BG date/timestamp.**
+
+```{r, results='asis'}
+dat_valid_time <- dat_valid_time[sort.list(dat_valid_time$location), ]
+n_total_days <- length(unique(dat_valid_time$date))
+table2_1 <- dat_valid_time %>% 
+  group_by(location) %>% 
+  summarise(
+    n_days_with_bg = n_distinct(date[!is.na(result)]), 
+    n_rows = params$print_n_perc(n = n(), total = n_total), 
+    n_valid_result = params$print_n_perc(n = sum(!is.na(result)), 
+                                         total = n_total), 
+    n_valid_all = params$print_n_perc(n = sum(!is.na(result) & 
+                                                !is.na(admission_id) & 
+                                                !is.na(location)), 
+                                      total = n_total), 
+    str_days_with_bg = sprintf("%d/%d", n_days_with_bg, n_total_days)
+  )
+table2_2 <- dat_valid_time %>% 
+  filter(!is.na(admission_id), !is.na(result), !is.na(location)) %>% 
+  group_by(location, date, admission_id) %>%
+  summarise(n = n()) %>% 
+  group_by(location) %>% 
+  summarise(n_per_day = sprintf("%.1f (%.1f - %.1f)", median(n), min(n), max(n)))
+table2 <- merge(table2_1, table2_2, by = "location", all = TRUE) %>%
+  arrange(-n_days_with_bg)
+params$kable_table(
+  table = cbind(1:nrow(table2), table2[, -2]),
+  colnames = c("[]()", "Location", "Number of rows read in: N (%)",
+               "Number of rows with valid BG value format: N (%)",
+               "Number of rows with valid BG value format, and valid admission id and location*: N (%)",
+               "Number of days with at least 1 BG reading / Number of days with at least 1 BG reading in the data",
+               "Count of BG reading per admission-day: Median (min - max)"),
+  width_row = "--|---------|-------------|-------------|-------------|-------------|-------------"
+)
+cat("*: Valid admission id and location means that the entry is not NA or blank (i.e., whitespace).\n")
+```
+
+There are `r sum(table2_1$n_days_with_bg / n_total_days < 0.75)` locations where
+less than 75% of the days had at least 1 BG reading.
