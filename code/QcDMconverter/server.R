@@ -12,7 +12,7 @@ options(shiny.maxRequestSize = 1000 * 1024 ^ 2)
 pathvar <<- getwd();
 tempdirpath <<- NULL;
 filesindir <<- NULL;
-status <<- "Please Configure QcDM using the controls on the left and click the 'Import' button\nPlease monitor the job status using the progress bar below. If an error occurs information will be shown here.";
+status <<- "Please Configure QcDM using the controls on the left and click the 'Import' button\nPlease monitor the job status using the progress bar below. If an error occurs information will be shown here.\n\nAfter clicking 'Import', existing files processed from the same input files selected will be overwritten.";
 countprogress <<- 0
 
 shinyServer(function(input, output, session) {

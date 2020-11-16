@@ -500,15 +500,23 @@ shinyServer(function(input, output) {
   output$saveMsg <- renderText({
     save_table <- glu()$save_tables
     file_path <- paste0(input$wkdir, "/Glucometric_report")
-    if(!dir.exists(file_path)){
-      dir.create(file_path)
-    }
+    if (!dir.exists(file_path)) dir.create(file_path)
     projectfolderpath <- unlist(strsplit(input$wkdir,'/'))
     folder_name <- projectfolderpath[length(projectfolderpath)]
-    write.table(save_table, file = paste0(file_path,"/",folder_name,"_",format(Sys.time(),'%Y_%m_%d_%H_%M_%S'),".csv"), sep = ',', row.names = FALSE, col.names = FALSE, na = '')
-    return(paste0("Summary Statistics report is saved under: '",input$wkdir, "/Glucometric_report/",folder_name,"_",Sys.time(),".csv'"))
-    
-    
+    time_stamp <- format(Sys.time(),'%Y_%m_%d_%H_%M_%S')
+    output_name <- paste0(folder_name, "_", time_stamp)
+    rmarkdown::render(
+      "glu_tables.Rmd", clean = TRUE, 
+      output_file = file.path(file_path, paste0(output_name, ".html")), 
+      params = list(table1 = glu()$table1, table2 = glu()$table2, 
+                    summary_table = glu()$summary_table, 
+                    table3 = glu()$table3)
+    )
+    write.csv(save_table, file = file.path(file_path, paste0(output_name, ".csv")), 
+              row.names = FALSE, col.names = FALSE, na = '')
+    return(paste0(
+      "Summary Statistics report is saved in the folder: '", file_path, 
+      "' as a CSV file named '", paste0(output_name, ".csv"), 
+      "' and as a HTML report named '", paste0(output_name, ".html"), "'."))
   })
-  
 })

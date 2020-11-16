@@ -4,13 +4,13 @@ QcDM Project
 Overview
 --------
 
-The QcDM (<ins>Q</ins>uality <ins>c</ins>are for <ins>D</ins>iabetes 
-<ins>M</ins>ellitus) Project provides R-Shiny applications for generating
-glucometrics measures from point-of-care blood glucose data at three different
-units of analysis: patient-sample, patient-day, and patient-stay. The
-application facilitates convenient and flexible generation of glucometrics
-measures by providing user-friendly graphical user interfaces (GUIs) that runs
-in a browser on the user's desktop.
+The QcDM (**Q**uality **c**are for **D**iabetes **M**ellitus) Project provides
+R-Shiny applications for generating glucometrics measures from point-of-care
+blood glucose data at three different units of analysis: patient-sample,
+patient-day, and patient-stay. The application facilitates convenient and
+flexible generation of glucometrics measures by providing user-friendly
+graphical user interfaces (GUIs) that runs on the user's desktop or from a USB
+drive.
 
 The QcDM Project consists of two R-Shiny GUIs and an R package. The first GUI,
 QcDMconverter, processes raw glucose data files to conform to the data format

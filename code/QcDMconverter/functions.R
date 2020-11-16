@@ -144,7 +144,7 @@ process_data <- function(path, header = TRUE, sheet_number = 1,
   # Create folders ---
   folder_list <- create_folders(path = path)
   # Save data and reports to folders ---
-  # Append the name of montly data and reports with the name of the input file.
+  # Append the name of monthly data and reports with the name of the input file.
   file_name <- unlist(strsplit(basename(path), split = "\\."))[1]
   lapply(unique(na.omit(dat$monyyyy)), function(monyyyy) {
     dat_monyyyy <- dat[dat$monyyyy == monyyyy, 
