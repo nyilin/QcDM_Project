@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+code/.DS_Store
+code/QcDMui/.DS_Store
+code/QcDMconverter/.DS_Store
+data/.DS_Store
+code/QcDM/
+Resources/
