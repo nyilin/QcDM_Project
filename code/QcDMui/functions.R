@@ -206,7 +206,7 @@ makeTable2 <- function(exlList, exclusion, ageRange, losNum_hour, freqNum, table
   })
   exlCriteria <- c(
     paste0("Length of hospital stay no greater than ",losNum_hour," hours"), 
-    paste0("No less than ",freqNum," glucose readings during hospital stay"), 
+    paste0("Less than ",freqNum," glucose readings during hospital stay"), 
     NA # NA for 1st 24 hours
   )[exclusion]
   exlCriteria <- c(NA,
