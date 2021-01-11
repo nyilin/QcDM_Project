@@ -1,8 +1,8 @@
 ## Get the unit of analysis: 1 for mmol/L, 2 for mg/dL-----------
 #' Get the unit of analysis based on new or stored data
-getUnit <- function(wkdir){
-  out1 <- dir(paste0(wkdir, "/data_new"), full.names = TRUE)
-  out2 <- dir(paste0(wkdir, "/data_historical"), full.names = TRUE)
+getUnit <- function(wkdir){ # Not in use now
+  out1 <- dir(paste0(wkdir, "/new_data"), full.names = TRUE)
+  out2 <- dir(paste0(wkdir, "/processed_data"), full.names = TRUE)
   if (length(out1) > 0) {
     file <- out1[1]
     data <- fread(input = file,
@@ -26,7 +26,7 @@ processData <- function(data, year, month, wkdir) {
   # Split by wards
   WARDS <- sort(unique(data$LOCATION))
   for (ward in WARDS) {
-    filedir = paste0(wkdir, "/GLU_data/", ward, "/", year, "/", month)
+    filedir = paste0(wkdir, "/glucometrics_output/", ward, "/", year, "/", month)
     if (!file.exists(filedir)) {
       dir.create(filedir, recursive = TRUE)
     }
@@ -384,7 +384,7 @@ saveGlucometrics <- function(wkdir, yearFrom, yearTo, monthFrom, monthTo,
     do.call("rbind", lapply(as.list(1:nrow(months)), function(i) {
       m <- months[i, "month"]
       yy <- months[i, "year"]
-      path.input <- paste0(wkdir, "/GLU_data/", ward, "/", yy, "/", 
+      path.input <- paste0(wkdir, "/glucometrics_output/", ward, "/", yy, "/", 
                            m, "/GLU_data.csv")
       if(!file.exists(path.input)){
         return(NULL)

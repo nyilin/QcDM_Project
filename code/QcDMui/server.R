@@ -41,15 +41,15 @@ shinyServer(function(input, output) {
   
   
   # Process data =====
-  # Look for new data in folder `data_new`, and then split each dataset by 
+  # Look for new data in folder `new_data`, and then split each dataset by 
   # ward and month.
   observe({
     
     output$batchMsg <- renderText({
       validate(need(input$wkdir, ""))
-      dataDir <- paste0(input$wkdir, "/data_new")
-      histDir <- paste0(input$wkdir, "/data_historical")
-      gluDir <- paste0(input$wkdir, "/GLU_data")
+      dataDir <- paste0(input$wkdir, "/new_data")
+      histDir <- paste0(input$wkdir, "/processed_data")
+      gluDir <- paste0(input$wkdir, "/glucometrics_output")
       #outDir <- paste0(input$wkdir, "/output")
       if (!file.exists(histDir)) {
         dir.create(histDir, recursive = TRUE)
@@ -65,7 +65,7 @@ shinyServer(function(input, output) {
       #}
       files <- dir(dataDir, pattern = ".csv")
       if (length(files) == 0) {
-        return("No file is found in folder 'data_new' in selected data folder.\n")
+        return("No file is found in folder 'new_data' in selected data folder.\n")
       } else {
         n <- length(files)
         withProgress(min = 0, max = n, {
@@ -89,12 +89,12 @@ shinyServer(function(input, output) {
               if (processed) {
                 setProgress(
                   detail = paste("successful.", file,
-                                 "has been moved to folder 'data_historical'.")
+                                 "has been moved to folder 'processed_data'.")
                 )
               } else {
                 setProgress(detail = paste(msgi, "failed.", processed))
               }
-              # Move process data to folder `data_historical`
+              # Move process data to folder `processed_data`
               file.rename(
                 from = paste(dataDir, file, sep = "/"),
                 to = paste(histDir, file, sep = "/")
@@ -122,7 +122,8 @@ shinyServer(function(input, output) {
   
   output$hypo3 <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hypo3",
         label = paste0(
@@ -138,7 +139,8 @@ shinyServer(function(input, output) {
   })
   output$hypo2 <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hypo2",
         label = paste0(
@@ -155,7 +157,8 @@ shinyServer(function(input, output) {
   })
   output$hypo1 <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hypo1",
         label = paste0(
@@ -173,7 +176,8 @@ shinyServer(function(input, output) {
   
   output$hyper3 <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hyper3",
         label = paste0(
@@ -190,7 +194,8 @@ shinyServer(function(input, output) {
   })
   output$hyper2 <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hyper2",
         label = paste0(
@@ -207,7 +212,8 @@ shinyServer(function(input, output) {
   })
   output$hyper1 <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hyper1",
         label = paste0(
@@ -225,7 +231,8 @@ shinyServer(function(input, output) {
   
   output$normalrange_lower <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "normalrange_lower",
         label = paste0(
@@ -242,7 +249,8 @@ shinyServer(function(input, output) {
   })
   output$normalrange_upper <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "normalrange_upper",
         label = paste0(
@@ -259,7 +267,8 @@ shinyServer(function(input, output) {
   })
   output$hgicutoff <- renderUI({
     if (!is.null(input$wkdir)) {
-      unitVal <- getUnit(input$wkdir)
+      # unitVal <- getUnit(input$wkdir)
+      unitVal <- as.integer(input$unitVal)
       numericInput(
         "hgicutoff",
         label = paste0(
@@ -335,7 +344,7 @@ shinyServer(function(input, output) {
   # Select wards =====
   searchWard <- reactive({
     
-    out <- dir(paste0(input$wkdir, "/GLU_data"))
+    out <- dir(paste0(input$wkdir, "/glucometrics_output"))
     if (length(out) == 0) {
       return(NULL)
     }
@@ -361,7 +370,7 @@ shinyServer(function(input, output) {
   dataSummary <- reactive({
     nMonths <- countMonths(yearFrom = input$yearFrom, yearTo = input$yearTo, 
                            monthFrom = input$monthFrom, monthTo = input$monthTo)
-    dataFolder <- paste0(input$wkdir, "/GLU_data")
+    dataFolder <- paste0(input$wkdir, "/glucometrics_output")
     if (input$wardMode == "all") {
       wards <- searchWard()
     } else {
@@ -460,7 +469,7 @@ shinyServer(function(input, output) {
                   "Please choose months to view in panel 'Data' first."))
     # Selected wards
     if (input$wardMode == "all") {
-      wards <- dir(paste0(input$wkdir, "/GLU_data"))
+      wards <- dir(paste0(input$wkdir, "/glucometrics_output"))
     } else {
       wards <- input$wardsSelected
     }

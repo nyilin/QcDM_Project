@@ -63,7 +63,7 @@ shinyServer(function(input, output, session) {
         if (input$loc == '<<Enter Manually>>') {
           result <<- process_data(path = s, header = input$header,
                                   id_name = input$admid, time_name = input$resdate, 
-                                  result_name = input$res, 
+                                  result_name = input$res, unit_str = input$res_unit,
                                   data_has_location = FALSE, location = input$locval,
                                   date_format = input$datef, time_format = input$timef)
         } else if (input$loc == '<<From Filename>>') {
@@ -71,13 +71,14 @@ shinyServer(function(input, output, session) {
           ward <- substr(s, loc + 1, nchar(s) - 4)
           result <<- process_data(path = s, header = input$header,
                                   id_name = input$admid, time_name = input$resdate, 
-                                  result_name = input$res, 
+                                  result_name = input$res, unit_str = input$res_unit, 
                                   data_has_location = FALSE, location = ward,
                                   date_format = input$datef, time_format = input$timef)
         } else {
           result <<- process_data(path = s, header = input$header,
                                   id_name = input$admid, time_name = input$resdate, 
-                                  result_name = input$res, location_name = input$loc,
+                                  result_name = input$res, unit_str = input$res_unit, 
+                                  location_name = input$loc,
                                   date_format = input$datef, time_format = input$timef)
         }
         
@@ -170,6 +171,12 @@ shinyServer(function(input, output, session) {
     selectInput(inputId = "res", label = "C) Result Value", 
                 choices = as.list(colnames(datain)))
   })
+  output$res_unit <- renderUI({ 
+    inFile <- paste0(input$wkdir,"/",input$file1)
+    if (is.null(inFile)) return('')
+    radioButtons(inputId = "res_unit", label = "Unit of Result Value:", 
+                 choices = c("mmol/L" = "mmolL", "mg/dL" = "mgdL"))
+  })
   
   output$loc <- renderUI({ 
     inFile <- paste0(input$wkdir,"/",input$file1)
@@ -192,7 +199,7 @@ shinyServer(function(input, output, session) {
   
   output$multip <- renderUI({ 
     list1 = list("No","Yes")
-    selectInput(inputId = "multip", label = "E) Process all files in this folder with these formats", choices = list1)
+    selectInput(inputId = "multip", label = "E) Process all files in this folder with the configuration above", choices = list1)
   })
   
   output$file1 <- renderUI({

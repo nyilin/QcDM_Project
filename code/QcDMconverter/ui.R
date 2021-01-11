@@ -48,8 +48,14 @@ shinyUI(navbarPage(
       conditionalPanel(
         "input.step1 == true && input.step2 == false",
         fluidRow(
-          column(4, htmlOutput("admid"), htmlOutput("resdate"), 
-                 htmlOutput("datef"), htmlOutput("timef"), htmlOutput("res"), 
+          column(4, 
+                 htmlOutput("admid"), 
+                 htmlOutput("resdate"), 
+                 htmlOutput("datef"), 
+                 htmlOutput("timef"), 
+                 htmlOutput("res"), 
+                 htmlOutput("res_unit"), 
+                 p("Imported files that use different units of result value will be stored in separate folders."),
                  htmlOutput("loc")),
           column(8,verbatimTextOutput("warnings"))
         ),

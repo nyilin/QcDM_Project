@@ -94,8 +94,10 @@ shinyUI(navbarPage("QcDM UI",theme=shinytheme("united"),
         width = 6, 
         # Select working directory =====
         htmlOutput("wkdir"),
+        radioButtons("unitVal", label = "After selecting the data folder, please specify the unit of BG readings used in ALL data files within this folder:", 
+                     choices = c("mmol/L" = 1, "mg/dL" = 2)),
         br(),
-        submitButton("Confirm data folder"),
+        submitButton("Confirm data folder and unit of BG readings"),
         hr(), 
         fluidRow(
           column(3, offset = 0.5,

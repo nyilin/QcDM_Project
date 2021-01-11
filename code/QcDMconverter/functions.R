@@ -27,18 +27,20 @@ kable_table <- function(table, colnames, width_row) {
 #' Creates the folder structure required by QcDMui
 #' 
 #' @param path Path to input file.
-create_folders <- function(path) {
+#' @param unit_str A string representing the unit of BG readings, "mmolL" for
+#'   "mmol/L", and "mgdL" for "mg/dL". 
+create_folders <- function(path, unit_str) {
   # Find the folder containing the input file:
   foldername <- file.path(dirname(tools::file_path_as_absolute(path)))
   # Create a folder named `foldername_processed` next to `foldername`:
   data_folder <- file.path(dirname(foldername), 
-                           paste0(basename(foldername), "_processed"))
+                           paste0(basename(foldername), "_processed_", unit_str))
   # Within `foldername_processed`, create `data_new`, `data_historical`, 
   # `GLU_data` and `Import_data_report`:
   folder_list <- list(
-    data_new = file.path(data_folder, "data_new"), 
-    data_historical = file.path(data_folder, "data_historical"), 
-    GLU_data = file.path(data_folder, "GLU_data"), 
+    data_new = file.path(data_folder, "new_data"), 
+    data_historical = file.path(data_folder, "processed_data"), 
+    GLU_data = file.path(data_folder, "glucometrics_output"), 
     Import_data_report = file.path(data_folder, "Import_data_report")
   )
   lapply(folder_list, function(folder) {
@@ -58,6 +60,8 @@ create_folders <- function(path) {
 #'   index for the admission id, result data/timestamp, result and location
 #'   columns. The column name for location can be `NULL` if `data_has_location =
 #'   FALSE`, but needs to be specified otherwise.
+#' @param unit_str A string representing the unit of BG readings, "mmolL" for
+#'   "mmol/L", and "mgdL" for "mg/dL". 
 #' @param data_has_location Indicates whether there is a location column in the
 #'   input data. Default is there is.
 #' @param location If `data_has_location = FALSE`, user must specify the
@@ -77,8 +81,9 @@ create_folders <- function(path) {
 #'   "NA" strings in the input data (including the `location` information) as
 #'   `NA`.
 process_data <- function(path, header = TRUE, sheet_number = 1, 
-                         id_name, time_name, result_name, location_name = NULL, 
-                         data_has_location = TRUE, location = "Please specify", 
+                         id_name, time_name, result_name, unit_str, 
+                         location_name = NULL, data_has_location = TRUE, 
+                         location = "Please specify", 
                          date_format, time_format, 
                          timezone = Sys.timezone(location = TRUE)) {
   if (!data_has_location & location == "Please specify") {
@@ -142,7 +147,7 @@ process_data <- function(path, header = TRUE, sheet_number = 1,
     return(0)
   }
   # Create folders ---
-  folder_list <- create_folders(path = path)
+  folder_list <- create_folders(path = path, unit_str = unit_str)
   # Save data and reports to folders ---
   # Append the name of monthly data and reports with the name of the input file.
   file_name <- unlist(strsplit(basename(path), split = "\\."))[1]
