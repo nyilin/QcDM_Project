@@ -249,9 +249,9 @@ shinyUI(navbarPage("QcDM UI",theme=shinytheme("united"),
       br(),
       textOutput("saveMsg")
     )
-  ),
-  tabPanel(strong("License"),
-    tags$div(
-    HTML('<iframe src="license.htm" width="100%" style="height: 35em;"></iframe>'))
-    )
+  )
+  # tabPanel(strong("License"),
+  #   tags$div(
+  #   HTML('<iframe src="license.htm" width="100%" style="height: 35em;"></iframe>'))
+  #   )
 ))

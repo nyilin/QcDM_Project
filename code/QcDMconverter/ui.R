@@ -6,11 +6,11 @@ shinyUI(navbarPage(
   "QcDM Converter",
   theme = shinytheme("united"),
   
-  tabPanel(
-    strong("License"),
-    tags$div(
-      HTML('<iframe src="license.htm" width="100%" style="height: 35em;"></iframe>'))
-  ),
+  # tabPanel(
+  #   strong("License"),
+  #   tags$div(
+  #     HTML('<iframe src="license.htm" width="100%" style="height: 35em;"></iframe>'))
+  # ),
   
   tabPanel(
     strong("Import Data"),
