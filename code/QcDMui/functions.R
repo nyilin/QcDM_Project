@@ -279,14 +279,14 @@ makeTable3 <- function(metricList, hypocutoffs, hypercutoffs, normalrange, hgicu
         paste("Percent with glucose >=", hypercutoffs[1], unitVal), 
         paste("Percent with glucose >=", hypercutoffs[2], unitVal), 
         paste("Percent with glucose >=", hypercutoffs[3], unitVal), 
-        paste0("Hyperglycemia index (HGI): AUC (> ",hgicutoff," ",unitVal,")/LOS (in hours)<sup>*</sup>"),
+        paste0("Hyperglycemia index (HGI): AUC (> ",hgicutoff," ",unitVal,")/LOS (in hours)"),
         "Median (IQR)", "Mean (SD)"),
       sub2 = c(
         paste("Percent with glucose >=", min(normalrange), " and <", 
               max(normalrange), unitVal),
-        paste0("Glucose (",unitVal,")<sup>*</sup>"),
+        paste0("Mean glucose (",unitVal,")"),
         "Median (IQR)", "Mean (SD)",
-        paste0("Average patient-day mean glucose for a patient-stay (",unitVal,")<sup>*</sup>"),
+        paste0("Average of mean glucose from patient-days within a patient-stay (",unitVal,")"),
         "Median (IQR)", "Mean (SD)"
       )),
     sec2 =  c(
@@ -294,9 +294,9 @@ makeTable3 <- function(metricList, hypocutoffs, hypercutoffs, normalrange, hgicu
       paste("Percent with glucose <", hypocutoffs[2], unitVal), 
       paste("Percent with glucose <", hypocutoffs[3], unitVal),
       paste0("Percent of patient-stays with a recurrent hypoglycemia (< ",recur_cutoff," ",unitVal,") day (10-240 mins)")),
-    sec3 = c(paste0("Standard deviation: SD (",unitVal,")<sup>2*</sup>"), 
+    sec3 = c(paste0("Standard deviation: SD (",unitVal,")"), 
              "Median (IQR)", "Mean (SD)", 
-             paste0("J-index (",unitVal,")<sup>2*</sup>"), 
+             paste0("J-index (",unitVal,")"), 
              "Median (IQR)", "Mean (SD)")
     
   )
@@ -312,11 +312,11 @@ makeTable3 <- function(metricList, hypocutoffs, hypercutoffs, normalrange, hgicu
                    rep("",3),
                    metricTable[10:11, ])), 
     sec2 = metricTable[12:15, ], 
-    sec3 =rbind(rep("",3),
-                metricTable[16:17, ],
-                rep("",3),
-                metricTable[18:19, ]))
-
+    sec3 = rbind(rep("",3),
+                 metricTable[16:17, ],
+                 rep("",3),
+                 metricTable[18:19, ]))
+  
   # Format and style of the table:
   list(
     table = paste0(
