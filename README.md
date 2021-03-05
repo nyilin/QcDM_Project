@@ -20,7 +20,21 @@ QcDM Project that uses functions in the
 data to generate glucometrics measures.
 
 The application operates on Windows and Mac operating systems, and is provided
-for free under an academic non-commercial license. The current version of this
-application can be downloaded from this repository. Detailed instructions on
-installation and usage of the QcDM Project is described in 
-**'QcDM Project User Manual.pdf'** in this repository.
+for free under the [GNU GPLv3 license](LICENSE). The current version of this
+application can be downloaded from this repository.
+
+Usage
+-----
+
+Detailed instructions on installation and usage of the QcDM Project is described
+in **'QcDM Project User Manual.pdf'** in this repository. Briefly, users need to
+first format the input BG data files according to the requirements of QcDM,
+either manually or by using QcDMconverter, and then use QcDMui to generate
+glucometrics reports. After launching QcDMui, users should first use the "Data"
+tab to identify the folder that contains the data files to be processed,
+configure the parameters to define glucometrics, and specify the time range to
+generate glucometrics report for. The screen below shows an example
+configuration:
+![config](www/Figure 2.jpg) 
+Next, users can proceed to the "Glucometrics" tab to view the report generated:
+![config](www/Figure 3.jpg)
