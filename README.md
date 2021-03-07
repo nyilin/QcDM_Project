@@ -35,9 +35,9 @@ tab to identify the folder that contains the data files to be processed,
 configure the parameters to define glucometrics, and specify the time range to
 generate glucometrics report for. The screen below shows an example
 configuration:
-
+<!--relative path did not work-->
 ![config](https://github.com/nyilin/QcDM_Project/blob/main/www/Figure%202.jpg?raw=true) 
 
 Next, users can proceed to the "Glucometrics" tab to view the report generated:
 
-![config](./www/Figure 3.jpg?raw=true)
+![config](https://github.com/nyilin/QcDM_Project/blob/main/www/Figure%203.jpg?raw=true)
