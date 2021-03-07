@@ -35,6 +35,6 @@ tab to identify the folder that contains the data files to be processed,
 configure the parameters to define glucometrics, and specify the time range to
 generate glucometrics report for. The screen below shows an example
 configuration:
-![config](www/Figure 2.jpg) 
+![config](./www/Figure 2.jpg) 
 Next, users can proceed to the "Glucometrics" tab to view the report generated:
-![config](www/Figure 3.jpg)
+![config](./www/Figure 3.jpg)
