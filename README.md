@@ -20,7 +20,7 @@ QcDM Project that uses functions in the
 data to generate glucometrics measures.
 
 The application operates on Windows and Mac operating systems, and is provided
-for free under the [GNU GPLv3 license](LICENSE). The current version of this
+for free under the [MIT license](LICENSE). The current version of this
 application can be downloaded from this repository.
 
 Usage
