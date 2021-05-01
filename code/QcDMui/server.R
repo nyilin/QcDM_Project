@@ -20,14 +20,14 @@ shinyServer(function(input, output) {
     head(out)
   })
   
-  output$glucometric_definition <- renderImage({
-    
-    
-    # Return a list containing the filename and alt text
-    list(src = 'Glucometrics_definition.png',
-         alt = paste(""))
-    
-  }, deleteFile = FALSE)
+  # output$glucometric_definition <- renderImage({
+  #   
+  #   
+  #   # Return a list containing the filename and alt text
+  #   list(src = 'Glucometrics_definition.png', 
+  #        alt = paste(""))
+  #   
+  # }, deleteFile = FALSE)
   
   # Tab: Data -----
   # Select working directory =====
