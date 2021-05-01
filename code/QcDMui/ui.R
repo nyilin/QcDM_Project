@@ -65,15 +65,16 @@ shinyUI(navbarPage("QcDM UI",theme=shinytheme("united"),
       tags$h3(strong("Sample data format")),
       tableOutput('sampledata'),
       tags$h2(strong("Glucometric definitions")),
-      imageOutput('glucometric_definition'),
+      # imageOutput('glucometric_definition'),
+      tags$div(img(src = "Glucometrics_definition.png", align = "left", width = 1000)),
       br(),
       br(),
-      p(
+      tags$div(p(
           "*Hyperglycemia index (HGI) is calculated by taking the area under the interpolated curve of all BG values within the admission above the cutoff value divided by the length of stay [1]."
         ),
        p(
           "**J-index is computed as a constant factor of the square of the sum of mean and SD of BG. The factor is set to 0.324 when unit is mmol/L and 0.001 when unit is mg/dL [2]."
-        ),
+        )),
       p('References:'),
       tags$ol(
         tags$li(
