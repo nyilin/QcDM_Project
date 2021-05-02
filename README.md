@@ -36,8 +36,8 @@ configure the parameters to define glucometrics, and specify the time range to
 generate glucometrics report for. The screen below shows an example
 configuration:
 <!--relative path did not work-->
-![config](https://github.com/nyilin/QcDM_Project/blob/main/www/Figure%202.jpg?raw=true) 
+![config](https://github.com/nyilin/QcDM_Project/blob/main/www/Figure2.jpg?raw=true) 
 
 Next, users can proceed to the "Glucometrics" tab to view the report generated:
 
-![config](https://github.com/nyilin/QcDM_Project/blob/main/www/Figure%203.jpg?raw=true)
+![config](https://github.com/nyilin/QcDM_Project/blob/main/www/Figure3.jpg?raw=true)
