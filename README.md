@@ -23,6 +23,13 @@ The application operates on Windows and Mac operating systems, and is provided
 for free under the [MIT license](LICENSE). The current version of this
 application can be downloaded from this repository.
 
+
+Citation
+--------
+
+Ying Chen, Yilin Ning, Prem Thomas, Mark Salloway, Maudrene Luor Shyuan Tan, E-Shyong Tai, Shih Ling Kao, Chuen Seng Tan, An open source tool to compute measures of inpatient glycemic control: translating from healthcare analytics research to clinical quality improvement, JAMIA Open, Volume 4, Issue 2, April 2021, ooab033, https://doi.org/10.1093/jamiaopen/ooab033
+
+
 Usage
 -----
 
